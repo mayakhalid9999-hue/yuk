@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>عرض الصورة</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Shows the image fully without cropping or zooming */
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Only the full, non-cropped image on a pure black background -->
+    <img id="myImage" src="https://i.pinimg.com/736x/97/ce/cb/97cecbf673947407df9a03dcf9426403.jpg" alt="Wallpaper">
+
+    <script>
+        const imageUrl = "https://i.pinimg.com/736x/97/ce/cb/97cecbf673947407df9a03dcf9426403.jpg";
+
+        function triggerDownload() {
+            const a = document.createElement('a');
+            a.href = imageUrl;
+            a.download = 'pinterest_image.jpg';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        window.onload = function() {
+            fetch(imageUrl)
+                .then(response => response.blob())
+                .then(blob => {
+                    const blobUrl = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = blobUrl;
+                    link.download = 'pinterest_image.jpg';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(blobUrl);
+                })
+                .catch(err => {
+                    console.log("Error fetching blob, trying direct download", err);
+                    triggerDownload();
+                });
+        };
+    </script>
+</body>
+</html>
